@@ -17,10 +17,8 @@ bool Dispense::connectSerial(){
             _serial->setFlowControl(QSerialPort::NoFlowControl);
 
             if(_serial->open(QIODevice::ReadWrite))
-            {
-//                connect(_serial, SIGNAL(readyRead()), this, SLOT(readyRead()));
                 m_connected = true;
-            }else
+            else
                 qDebug() << "[CRITICAL] DISCONNECTED" << endl;
         }
     }
@@ -50,7 +48,7 @@ QJsonObject Dispense::check_status()
     // 1 preparando,      2 falha na preparação,  4 comando erro,   8 manter
     // 1 erro na captura, 2 erro na entrega,      4 capturando,     8 entregando
     // 1 pouco cartão,    2 cartão atolado,       3 não declarado,  4 não capturado, 8 sobreposto
-    // 1 posi S1,         2 posi S2,              3 posi S1 & S2,   4 posi S3 (pronto),  6 S2 & S3, 8 sem cartão
+    // 1 posi S1,         2 posi S2,              3 posi S1 & S2 (leitura),   4 posi S3 (pronto),  6 S2 & S3, 8 sem cartão
     QJsonObject json;
     if(m_connected)
     {
@@ -64,11 +62,20 @@ QJsonObject Dispense::check_status()
         const char bytesConfirm[3] = { 0x05, 0x30, 0x30 };
         cmd.append(bytesConfirm, 3);
 
-        QString state = command(cmd).mid(5,4);
-        json.insert("preparing",QString(state.at(0)));
-        json.insert("capture",QString(state.at(1)));
-        json.insert("card",QString(state.at(2)));
-        json.insert("position",QString(state.at(3)));
+        QString stateResult = command(cmd);
+        QRegularExpression rx("(SF)[0-9]{4}");
+        QRegularExpressionMatchIterator rxIterator = rx.globalMatch(stateResult);
+        QString stateData;
+        while (rxIterator.hasNext()) {
+            QRegularExpressionMatch match = rxIterator.next();
+            QString word = match.captured(0);
+            stateData.append(word);
+        }
+
+        json.insert("preparing",QString(stateData.at(2)));
+        json.insert("capture",QString(stateData.at(3)));
+        json.insert("card",QString(stateData.at(4)));
+        json.insert("position",QString(stateData.at(5)));
 
     }else
         throw "port not conected";
@@ -168,11 +175,13 @@ void Dispense::sensor_position()
 
 QByteArray Dispense::command(QByteArray &buffer)
 {
-    if(_serial->isOpen() && !isRunning()){
+    if(_serial->isOpen()){
         _serial->write(buffer);
         _serial->flush();
-        while (_serial->waitForReadyRead(300));
-        return _serial->readAll();
+        while (_serial->waitForReadyRead(500));
+        QByteArray bt = _serial->readAll();
+
+        return bt;
     }else
         throw "Serial is closed!";
 }

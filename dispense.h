@@ -5,12 +5,11 @@
 #include <QDebug>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-#include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QJsonObject>
 
-class Dispense: public QThread
+class Dispense: public QObject
 {
     Q_OBJECT
 public:

@@ -1,26 +1,22 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QWidget>
 #include <QMainWindow>
-#include <QIcon>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QGridLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QDebug>
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
-
-class MainWindow : public QMainWindow
+class MainWindow: public QMainWindow
 {
-    Q_OBJECT
-
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
+signals:
+
 };
+
 #endif // MAINWINDOW_H

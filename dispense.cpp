@@ -179,9 +179,7 @@ QByteArray Dispense::command(QByteArray &buffer)
         _serial->write(buffer);
         _serial->flush();
         while (_serial->waitForReadyRead(500));
-        QByteArray bt = _serial->readAll();
-
-        return bt;
+        return _serial->readAll();
     }else
         throw "Serial is closed!";
 }

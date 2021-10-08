@@ -14,8 +14,9 @@ class Dispense: public QObject
     Q_OBJECT
 public:
     ~Dispense();
-    Q_INVOKABLE bool connectSerial();
-    Q_INVOKABLE QByteArray command(QByteArray&);
+    bool connectSerial();
+    QByteArray command(QByteArray&);
+    QJsonObject check_status();
 
 signals:
     void successRead(QString tag);
@@ -25,13 +26,12 @@ signals:
     void successLoginChanged();
 
 public slots:
-    Q_INVOKABLE void reset();
-    Q_INVOKABLE QJsonObject check_status();
-    Q_INVOKABLE void read_card_posi();
-    Q_INVOKABLE void capture_card();
-    Q_INVOKABLE void outside_position();
-    Q_INVOKABLE void out_partial_position();
-    Q_INVOKABLE void sensor_position();
+    void reset();
+    void read_card_posi();
+    void capture_card();
+    void outside_position();
+    void out_partial_position();
+    void sensor_position();
 
 private:
     char sum(QByteArray);

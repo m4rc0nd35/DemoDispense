@@ -26,6 +26,7 @@ bool Dispense::connectSerial(){
 
 void Dispense::reset()
 {
+    qDebug() << "reset" << endl;
     if(m_connected)
     {
         QByteArray cmd;

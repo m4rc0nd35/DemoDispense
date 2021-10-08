@@ -8,14 +8,17 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QDebug>
+#include <dispense.h>
 
-class MainWindow: public QMainWindow
+class MainWindow: public QObject
 {
+    Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent=nullptr);
+    explicit MainWindow(QObject *parent=nullptr);
     ~MainWindow();
 
-signals:
+public slots:
+    void test();
 
 };
 
